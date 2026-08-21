@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     database_url: str
     muse_api_key: str | None = None
     muse_base_url: str = "https://www.themuse.com/api/public"
+    remotive_base_url: str = "https://remotive.com/api/remote-jobs"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
