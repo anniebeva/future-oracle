@@ -117,11 +117,13 @@ def create_run(
     finished_at: datetime,
     *,
     status: str = "success",
+    started_at: datetime | None = None,
 ) -> None:
     session.add(
         IngestionRun(
             source_id=source.id,
             status=status,
+            started_at=started_at or finished_at,
             finished_at=finished_at,
             records_received=1,
         )
@@ -238,6 +240,35 @@ def test_coverage_counts_only_distinct_successful_finished_dates(session: Sessio
 
     assert indicator.coverage_days == 5
     assert WeeklyIndicatorService().is_valid_source_week(indicator) is False
+
+
+def test_successful_runs_outside_the_requested_week_do_not_count_for_coverage(
+    session: Session,
+) -> None:
+    source = create_source(session, "muse")
+    create_skill(session)
+    create_run(session, source, WEEK_START - timedelta(microseconds=1))
+    create_run(session, source, WEEK_START + timedelta(hours=12))
+    create_run(session, source, WEEK_END + timedelta(microseconds=1))
+
+    indicator = calculate(session)[0]
+
+    assert indicator.coverage_days == 1
+
+
+def test_cross_midnight_run_counts_for_its_monday_completion_day(session: Session) -> None:
+    source = create_source(session, "muse")
+    create_skill(session)
+    create_run(
+        session,
+        source,
+        WEEK_START + timedelta(minutes=1),
+        started_at=WEEK_START - timedelta(minutes=1),
+    )
+
+    indicator = calculate(session)[0]
+
+    assert indicator.coverage_days == 1
 
 
 def test_low_eligible_count_is_persisted_and_marked_invalid_by_helper(session: Session) -> None:
