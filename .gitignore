@@ -1,10 +1,24 @@
+# Environment
 .env
+frontend/.env
+
+# Python
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.ruff_cache/
-.coverage
-htmlcov/
 .venv/
 backend/.venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ruff
+.ruff_cache/
+
+# Database
 postgres_data/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
