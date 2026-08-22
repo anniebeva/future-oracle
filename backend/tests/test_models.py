@@ -1,8 +1,8 @@
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import Numeric, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 
 from app.db.base import Base
-from app.models import JobPosting, JobSkillMatch, RawSourceRecord, SkillAlias
+from app.models import JobPosting, JobSkillMatch, RawSourceRecord, SkillAlias, WeeklyIndicator
 
 
 def unique_constraint_columns(table_name: str) -> set[tuple[str, ...]]:
@@ -45,3 +45,38 @@ def test_raw_source_records_allow_multiple_snapshots_for_one_source_posting() ->
 
 def test_job_postings_do_not_reference_a_single_raw_snapshot() -> None:
     assert "raw_source_record_id" not in JobPosting.__table__.c
+
+
+def test_weekly_indicator_is_registered_with_required_columns() -> None:
+    table = Base.metadata.tables["weekly_indicators"]
+
+    assert WeeklyIndicator.__table__ is table
+    assert {
+        "id",
+        "source_id",
+        "skill_id",
+        "period_start",
+        "period_end",
+        "eligible_postings_count",
+        "matching_postings_count",
+        "skill_share",
+        "coverage_days",
+        "calculated_at",
+    }.issubset(table.c.keys())
+
+
+def test_weekly_indicator_constraints_and_numeric_share_are_declared() -> None:
+    table = WeeklyIndicator.__table__
+
+    assert table.c.source_id.foreign_keys
+    assert table.c.skill_id.foreign_keys
+    assert (
+        "source_id",
+        "skill_id",
+        "period_start",
+        "period_end",
+    ) in unique_constraint_columns("weekly_indicators")
+    assert isinstance(table.c.skill_share.type, Numeric)
+    assert table.c.period_start.type.timezone is True
+    assert table.c.period_end.type.timezone is True
+    assert table.c.calculated_at.type.timezone is True

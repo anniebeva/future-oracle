@@ -7,6 +7,7 @@ from app.models.job_skill_match import JobSkillMatch
 from app.models.raw_source_record import RawSourceRecord
 from app.models.skill import Skill
 from app.models.skill_alias import SkillAlias
+from app.models.weekly_indicator import WeeklyIndicator
 
 __all__ = [
     "DataSource",
@@ -16,4 +17,5 @@ __all__ = [
     "RawSourceRecord",
     "Skill",
     "SkillAlias",
+    "WeeklyIndicator",
 ]

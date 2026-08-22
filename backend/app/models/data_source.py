@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from app.models.ingestion_run import IngestionRun
     from app.models.job_posting import JobPosting
     from app.models.raw_source_record import RawSourceRecord
+    from app.models.weekly_indicator import WeeklyIndicator
 
 
 class DataSource(TimestampMixin, Base):
@@ -28,3 +29,4 @@ class DataSource(TimestampMixin, Base):
     ingestion_runs: Mapped[list[IngestionRun]] = relationship(back_populates="source")
     raw_source_records: Mapped[list[RawSourceRecord]] = relationship(back_populates="source")
     job_postings: Mapped[list[JobPosting]] = relationship(back_populates="source")
+    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(back_populates="source")

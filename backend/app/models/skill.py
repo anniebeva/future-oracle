@@ -10,6 +10,7 @@ from app.db.base import Base, TimestampMixin
 if TYPE_CHECKING:
     from app.models.job_skill_match import JobSkillMatch
     from app.models.skill_alias import SkillAlias
+    from app.models.weekly_indicator import WeeklyIndicator
 
 
 class Skill(TimestampMixin, Base):
@@ -24,3 +25,4 @@ class Skill(TimestampMixin, Base):
 
     aliases: Mapped[list[SkillAlias]] = relationship(back_populates="skill")
     job_skill_matches: Mapped[list[JobSkillMatch]] = relationship(back_populates="skill")
+    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(back_populates="skill")
