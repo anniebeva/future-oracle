@@ -2,7 +2,8 @@ from sqlalchemy import Numeric, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 
 from app.db.base import Base
-from app.models import JobPosting, JobSkillMatch, RawSourceRecord, SkillAlias, WeeklyIndicator
+from app.models import (JobPosting, JobSkillMatch, RawSourceRecord, SkillAlias,
+                        WeeklyIndicator)
 
 
 def unique_constraint_columns(table_name: str) -> set[tuple[str, ...]]:
@@ -40,7 +41,9 @@ def test_relationship_foreign_keys_are_declared() -> None:
 
 
 def test_raw_source_records_allow_multiple_snapshots_for_one_source_posting() -> None:
-    assert ("source_id", "external_id") not in unique_constraint_columns("raw_source_records")
+    assert ("source_id", "external_id") not in unique_constraint_columns(
+        "raw_source_records"
+    )
 
 
 def test_job_postings_do_not_reference_a_single_raw_snapshot() -> None:

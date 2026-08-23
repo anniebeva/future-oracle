@@ -23,10 +23,18 @@ class DataSource(TimestampMixin, Base):
     code: Mapped[str] = mapped_column(String(50), index=True)
     name: Mapped[str] = mapped_column(String(255))
     base_url: Mapped[str] = mapped_column(String(500))
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
-    last_successful_sync_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="true"
+    )
+    last_successful_sync_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True)
+    )
 
     ingestion_runs: Mapped[list[IngestionRun]] = relationship(back_populates="source")
-    raw_source_records: Mapped[list[RawSourceRecord]] = relationship(back_populates="source")
+    raw_source_records: Mapped[list[RawSourceRecord]] = relationship(
+        back_populates="source"
+    )
     job_postings: Mapped[list[JobPosting]] = relationship(back_populates="source")
-    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(back_populates="source")
+    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(
+        back_populates="source"
+    )

@@ -28,7 +28,9 @@ NON_TECHNICAL_TITLE_KEYWORDS: tuple[str, ...] = (
 )
 
 
-def is_technical_posting(source_code: str, category: str | None, title: str | None) -> bool:
+def is_technical_posting(
+    source_code: str, category: str | None, title: str | None
+) -> bool:
     """Determine technical eligibility from source category and title"""
     normalized_title = _normalize(title)
     if _contains_keyword(normalized_title, NON_TECHNICAL_TITLE_KEYWORDS):
@@ -45,7 +47,9 @@ def is_technical_posting(source_code: str, category: str | None, title: str | No
 
 def _contains_keyword(text: str, keywords: tuple[str, ...]) -> bool:
     """Match a configured keyword as a standalone phrase"""
-    return any(re.search(rf"(?<!\w){re.escape(keyword)}(?!\w)", text) for keyword in keywords)
+    return any(
+        re.search(rf"(?<!\w){re.escape(keyword)}(?!\w)", text) for keyword in keywords
+    )
 
 
 def _normalize(value: str | None) -> str:

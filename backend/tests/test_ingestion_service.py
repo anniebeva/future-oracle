@@ -151,7 +151,9 @@ def test_remotive_ingestion_creates_run_snapshot_and_posting(session: Session) -
     assert posting.location_scope == "Worldwide"
 
 
-def test_second_ingestion_creates_snapshot_and_updates_existing_posting(session: Session) -> None:
+def test_second_ingestion_creates_snapshot_and_updates_existing_posting(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     service = IngestionService(
         session,
@@ -163,10 +165,14 @@ def test_second_ingestion_creates_snapshot_and_updates_existing_posting(session:
     first_seen_at = posting.first_seen_at
     first_last_seen_at = posting.last_seen_at
 
-    service._muse_client = FakeMuseClient(muse_response(title="Senior Python Developer"))
+    service._muse_client = FakeMuseClient(
+        muse_response(title="Senior Python Developer")
+    )
     asyncio.run(service.ingest(source))
 
-    snapshots = session.scalars(select(RawSourceRecord).order_by(RawSourceRecord.id)).all()
+    snapshots = session.scalars(
+        select(RawSourceRecord).order_by(RawSourceRecord.id)
+    ).all()
     updated_posting = session.scalars(select(JobPosting)).one()
     assert len(snapshots) == 2
     assert len(session.scalars(select(JobPosting)).all()) == 1
@@ -215,6 +221,6 @@ def test_client_failure_marks_run_failed_and_reraises(session: Session) -> None:
 
 
 def test_html_to_text_is_deterministic() -> None:
-    assert IngestionService._html_to_text("<p>Python&nbsp;developer</p><p>Build APIs</p>") == (
-        "Python developer Build APIs"
-    )
+    assert IngestionService._html_to_text(
+        "<p>Python&nbsp;developer</p><p>Build APIs</p>"
+    ) == ("Python developer Build APIs")

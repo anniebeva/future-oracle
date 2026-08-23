@@ -54,7 +54,9 @@ class JobPostingRepository:
         if published_to is not None:
             statement = statement.where(JobPosting.published_at <= published_to)
         if search is not None:
-            statement = statement.where(func.lower(JobPosting.title).like(f"%{search.casefold()}%"))
+            statement = statement.where(
+                func.lower(JobPosting.title).like(f"%{search.casefold()}%")
+            )
         return list(session.scalars(statement).unique())
 
     @staticmethod

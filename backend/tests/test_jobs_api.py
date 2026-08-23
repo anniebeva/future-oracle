@@ -178,7 +178,9 @@ def test_source_and_skill_filters_work_without_duplicate_jobs(
     assert [item["id"] for item in skill_response.json()] == [python_job.id]
 
 
-def test_current_dictionary_version_is_respected(client: TestClient, session: Session) -> None:
+def test_current_dictionary_version_is_respected(
+    client: TestClient, session: Session
+) -> None:
     source = create_source(session, "muse")
     python = create_skill(session, "python", dictionary_version=2)
     old_match_job = create_job(session, source, "1")
@@ -190,7 +192,9 @@ def test_current_dictionary_version_is_respected(client: TestClient, session: Se
     response = client.get("/api/jobs", params={"skill": "python"})
 
     assert [item["id"] for item in response.json()] == [current_match_job.id]
-    assert response.json()[0]["skills"] == [{"code": "python", "display_name": "Python"}]
+    assert response.json()[0]["skills"] == [
+        {"code": "python", "display_name": "Python"}
+    ]
 
 
 def test_location_remote_and_title_search_filters_work(
@@ -230,8 +234,12 @@ def test_publication_filters_and_combined_filters_work(
     create_match(session, current, python)
     session.commit()
 
-    from_response = client.get("/api/jobs", params={"published_from": PUBLISHED_AT.isoformat()})
-    to_response = client.get("/api/jobs", params={"published_to": older_published_at.isoformat()})
+    from_response = client.get(
+        "/api/jobs", params={"published_from": PUBLISHED_AT.isoformat()}
+    )
+    to_response = client.get(
+        "/api/jobs", params={"published_to": older_published_at.isoformat()}
+    )
     combined_response = client.get(
         "/api/jobs",
         params={
@@ -242,7 +250,10 @@ def test_publication_filters_and_combined_filters_work(
         },
     )
 
-    assert {item["id"] for item in from_response.json()} == {current.id, remotive_current.id}
+    assert {item["id"] for item in from_response.json()} == {
+        current.id,
+        remotive_current.id,
+    }
     assert [item["id"] for item in to_response.json()] == [older.id]
     assert [item["id"] for item in combined_response.json()] == [current.id]
 
@@ -251,7 +262,9 @@ def test_results_are_ordered_by_newest_publication_then_id(
     client: TestClient, session: Session
 ) -> None:
     source = create_source(session, "muse")
-    older = create_job(session, source, "1", published_at=PUBLISHED_AT - timedelta(days=1))
+    older = create_job(
+        session, source, "1", published_at=PUBLISHED_AT - timedelta(days=1)
+    )
     same_time_first = create_job(session, source, "2")
     same_time_second = create_job(session, source, "3")
     session.commit()

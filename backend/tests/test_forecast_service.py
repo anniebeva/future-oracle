@@ -14,11 +14,8 @@ from app.db.base import Base, load_models
 from app.models.data_source import DataSource
 from app.models.skill import Skill
 from app.models.weekly_indicator import WeeklyIndicator
-from app.services.forecast_service import (
-    ForecastResult,
-    ForecastService,
-    InsufficientDataResult,
-)
+from app.services.forecast_service import (ForecastResult, ForecastService,
+                                           InsufficientDataResult)
 
 
 @compiles(JSONB, "sqlite")

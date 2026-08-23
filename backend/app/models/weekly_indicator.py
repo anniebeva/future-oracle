@@ -32,7 +32,9 @@ class WeeklyIndicator(Base):
     source_id: Mapped[int] = mapped_column(
         ForeignKey("data_sources.id", ondelete="RESTRICT"), index=True
     )
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id", ondelete="RESTRICT"), index=True)
+    skill_id: Mapped[int] = mapped_column(
+        ForeignKey("skills.id", ondelete="RESTRICT"), index=True
+    )
     period_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     period_end: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     eligible_postings_count: Mapped[int] = mapped_column(Integer)

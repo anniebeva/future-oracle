@@ -35,7 +35,9 @@ def test_weekly_indicator_migration_creates_expected_schema(monkeypatch) -> None
     table = Table("weekly_indicators", MetaData(), *create_table.call_args.args[1:])
     columns = {item.name for item in table.c if isinstance(item, Column)}
     unique_constraints = [
-        constraint for constraint in table.constraints if isinstance(constraint, UniqueConstraint)
+        constraint
+        for constraint in table.constraints
+        if isinstance(constraint, UniqueConstraint)
     ]
 
     assert {
@@ -51,13 +53,15 @@ def test_weekly_indicator_migration_creates_expected_schema(monkeypatch) -> None
         "calculated_at",
     } == columns
     assert {
-        foreign_key.elements[0].target_fullname for foreign_key in table.foreign_key_constraints
+        foreign_key.elements[0].target_fullname
+        for foreign_key in table.foreign_key_constraints
     } == {
         "data_sources.id",
         "skills.id",
     }
     assert [
-        tuple(column.name for column in constraint.columns) for constraint in unique_constraints
+        tuple(column.name for column in constraint.columns)
+        for constraint in unique_constraints
     ] == [("source_id", "skill_id", "period_start", "period_end")]
     assert isinstance(table.c.skill_share.type, Numeric)
     assert {call.args[0] for call in create_index.call_args_list} == {

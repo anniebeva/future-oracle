@@ -15,7 +15,8 @@ from app.models.job_posting import JobPosting
 from app.models.job_skill_match import JobSkillMatch
 from app.models.skill import Skill
 from app.services.skill_matching_service import SkillMatchingService
-from app.services.skill_seed import INITIAL_DICTIONARY_VERSION, seed_initial_skills
+from app.services.skill_seed import (INITIAL_DICTIONARY_VERSION,
+                                     seed_initial_skills)
 
 
 @compiles(JSONB, "sqlite")
@@ -141,7 +142,9 @@ def test_word_boundaries_prevent_false_positives(session: Session) -> None:
     assert matches_for(session, posting) == []
 
 
-def test_django_docker_containerization_and_standalone_aws_match(session: Session) -> None:
+def test_django_docker_containerization_and_standalone_aws_match(
+    session: Session,
+) -> None:
     posting = create_posting(
         session,
         title="Django and Docker Engineer",
@@ -156,7 +159,9 @@ def test_django_docker_containerization_and_standalone_aws_match(session: Sessio
 
 
 def test_no_matching_skills_creates_no_records(session: Session) -> None:
-    posting = create_posting(session, title="Java Engineer", description="Kubernetes experience")
+    posting = create_posting(
+        session, title="Java Engineer", description="Kubernetes experience"
+    )
 
     result = SkillMatchingService().match_job_posting(session, posting.id)
 
@@ -232,4 +237,6 @@ def test_initial_seed_uses_version_one(session: Session) -> None:
     skills = session.scalars(select(Skill).order_by(Skill.code)).all()
 
     assert len(skills) == 6
-    assert {skill.dictionary_version for skill in skills} == {INITIAL_DICTIONARY_VERSION}
+    assert {skill.dictionary_version for skill in skills} == {
+        INITIAL_DICTIONARY_VERSION
+    }

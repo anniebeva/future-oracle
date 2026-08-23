@@ -31,7 +31,9 @@ class JobPostingFilters(BaseModel):
         """Require an ordered optional publication range"""
         if self.published_from is not None and self.published_to is not None:
             if self.published_from > self.published_to:
-                raise ValueError("published_from must be before or equal to published_to")
+                raise ValueError(
+                    "published_from must be before or equal to published_to"
+                )
         return self
 
 

@@ -17,7 +17,8 @@ from app.models.job_posting import JobPosting
 from app.models.job_skill_match import JobSkillMatch
 from app.models.skill import Skill
 from app.models.weekly_indicator import WeeklyIndicator
-from app.services.weekly_indicator_service import WeeklyIndicatorService, is_valid_source_week
+from app.services.weekly_indicator_service import (WeeklyIndicatorService,
+                                                   is_valid_source_week)
 
 WEEK_START = datetime(2026, 8, 10, tzinfo=UTC)
 WEEK_END = datetime(2026, 8, 16, 23, 59, 59, 999999, tzinfo=UTC)
@@ -53,7 +54,9 @@ def session() -> Iterator[Session]:
 
 
 def create_source(session: Session, code: str) -> DataSource:
-    source = DataSource(code=code, name=code.title(), base_url=f"https://{code}.example")
+    source = DataSource(
+        code=code, name=code.title(), base_url=f"https://{code}.example"
+    )
     session.add(source)
     session.flush()
     return source
@@ -140,13 +143,19 @@ def calculate(session: Session) -> list[WeeklyIndicator]:
     )
 
 
-def test_monday_sunday_boundaries_and_publication_date_determine_week(session: Session) -> None:
+def test_monday_sunday_boundaries_and_publication_date_determine_week(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     skill = create_skill(session)
     monday = create_posting(session, source, "1", published_at=WEEK_START)
     sunday = create_posting(session, source, "2", published_at=WEEK_END)
-    create_posting(session, source, "3", published_at=WEEK_START - timedelta(microseconds=1))
-    create_posting(session, source, "4", published_at=WEEK_END + timedelta(microseconds=1))
+    create_posting(
+        session, source, "3", published_at=WEEK_START - timedelta(microseconds=1)
+    )
+    create_posting(
+        session, source, "4", published_at=WEEK_END + timedelta(microseconds=1)
+    )
     create_match(session, monday, skill)
     create_match(session, sunday, skill)
 
@@ -178,8 +187,12 @@ def test_technical_category_and_title_are_eligible_but_non_technical_titles_are_
     source = create_source(session, "muse")
     create_skill(session)
     create_posting(session, source, "1", title="Python Developer")
-    create_posting(session, source, "2", title="Generalist", category="Software Engineering")
-    create_posting(session, source, "3", title="Recruiter", category="Software Engineering")
+    create_posting(
+        session, source, "2", title="Generalist", category="Software Engineering"
+    )
+    create_posting(
+        session, source, "3", title="Recruiter", category="Software Engineering"
+    )
     create_posting(session, source, "4", title="Sales Manager")
     create_posting(session, source, "5", title="Product Marketing Manager")
     create_posting(session, source, "6", title="Accountant")
@@ -224,11 +237,17 @@ def test_indicators_are_separate_for_sources_and_skills(session: Session) -> Non
     assert len(indicators) == 4
     assert indicator_by_source_skill[(muse.id, python.id)].matching_postings_count == 1
     assert indicator_by_source_skill[(muse.id, docker.id)].matching_postings_count == 0
-    assert indicator_by_source_skill[(remotive.id, python.id)].matching_postings_count == 0
-    assert indicator_by_source_skill[(remotive.id, docker.id)].matching_postings_count == 1
+    assert (
+        indicator_by_source_skill[(remotive.id, python.id)].matching_postings_count == 0
+    )
+    assert (
+        indicator_by_source_skill[(remotive.id, docker.id)].matching_postings_count == 1
+    )
 
 
-def test_coverage_counts_only_distinct_successful_finished_dates(session: Session) -> None:
+def test_coverage_counts_only_distinct_successful_finished_dates(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     create_skill(session)
     for day_offset in range(5):
@@ -256,7 +275,9 @@ def test_successful_runs_outside_the_requested_week_do_not_count_for_coverage(
     assert indicator.coverage_days == 1
 
 
-def test_cross_midnight_run_counts_for_its_monday_completion_day(session: Session) -> None:
+def test_cross_midnight_run_counts_for_its_monday_completion_day(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     create_skill(session)
     create_run(
@@ -271,7 +292,9 @@ def test_cross_midnight_run_counts_for_its_monday_completion_day(session: Sessio
     assert indicator.coverage_days == 1
 
 
-def test_low_eligible_count_is_persisted_and_marked_invalid_by_helper(session: Session) -> None:
+def test_low_eligible_count_is_persisted_and_marked_invalid_by_helper(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     create_skill(session)
     create_posting(session, source, "1")
@@ -281,11 +304,16 @@ def test_low_eligible_count_is_persisted_and_marked_invalid_by_helper(session: S
     indicator = calculate(session)[0]
 
     assert indicator.eligible_postings_count == 1
-    assert is_valid_source_week(indicator.eligible_postings_count, indicator.coverage_days) is False
+    assert (
+        is_valid_source_week(indicator.eligible_postings_count, indicator.coverage_days)
+        is False
+    )
     assert session.scalar(select(WeeklyIndicator)) is indicator
 
 
-def test_low_coverage_is_persisted_and_marked_invalid_by_helper(session: Session) -> None:
+def test_low_coverage_is_persisted_and_marked_invalid_by_helper(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     create_skill(session)
     for number in range(30):
@@ -296,10 +324,15 @@ def test_low_coverage_is_persisted_and_marked_invalid_by_helper(session: Session
 
     assert indicator.eligible_postings_count == 30
     assert indicator.coverage_days == 1
-    assert is_valid_source_week(indicator.eligible_postings_count, indicator.coverage_days) is False
+    assert (
+        is_valid_source_week(indicator.eligible_postings_count, indicator.coverage_days)
+        is False
+    )
 
 
-def test_recalculation_updates_existing_indicator_without_duplicates(session: Session) -> None:
+def test_recalculation_updates_existing_indicator_without_duplicates(
+    session: Session,
+) -> None:
     source = create_source(session, "muse")
     skill = create_skill(session)
     posting = create_posting(session, source, "1")

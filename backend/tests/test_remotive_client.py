@@ -4,13 +4,10 @@ from collections.abc import Callable
 import httpx
 import pytest
 
-from app.clients.remotive import (
-    DEFAULT_CATEGORY,
-    RemotiveClient,
-    RemotiveClientConnectionError,
-    RemotiveClientHTTPError,
-    RemotiveClientTimeoutError,
-)
+from app.clients.remotive import (DEFAULT_CATEGORY, RemotiveClient,
+                                  RemotiveClientConnectionError,
+                                  RemotiveClientHTTPError,
+                                  RemotiveClientTimeoutError)
 from app.core.config import Settings
 
 
@@ -27,7 +24,10 @@ def make_client(handler: Callable[[httpx.Request], httpx.Response]) -> RemotiveC
 
 
 def test_fetch_jobs_returns_raw_response_data() -> None:
-    expected_payload = {"job-count": 1, "jobs": [{"id": 123, "title": "Python Developer"}]}
+    expected_payload = {
+        "job-count": 1,
+        "jobs": [{"id": 123, "title": "Python Developer"}],
+    }
 
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path == "/api/remote-jobs"

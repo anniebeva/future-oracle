@@ -147,13 +147,17 @@ def test_source_and_skill_filters_work(client: TestClient, session: Session) -> 
     assert [item["skill"]["code"] for item in skill_response.json()] == ["docker"]
 
 
-def test_period_filters_and_combined_filters_work(client: TestClient, session: Session) -> None:
+def test_period_filters_and_combined_filters_work(
+    client: TestClient, session: Session
+) -> None:
     muse = create_source(session, "muse")
     remotive = create_source(session, "remotive")
     python = create_skill(session, "python")
     older_start = PERIOD_START - timedelta(days=7)
     older_end = PERIOD_END - timedelta(days=7)
-    create_indicator(session, muse, python, period_start=older_start, period_end=older_end)
+    create_indicator(
+        session, muse, python, period_start=older_start, period_end=older_end
+    )
     create_indicator(session, muse, python)
     create_indicator(session, remotive, python)
 
@@ -181,7 +185,9 @@ def test_period_filters_and_combined_filters_work(client: TestClient, session: S
     assert combined_response.json()[0]["source"]["code"] == "muse"
 
 
-def test_inactive_sources_and_skills_are_excluded(client: TestClient, session: Session) -> None:
+def test_inactive_sources_and_skills_are_excluded(
+    client: TestClient, session: Session
+) -> None:
     active_source = create_source(session, "muse")
     inactive_source = create_source(session, "remotive", is_active=False)
     active_skill = create_skill(session, "python")
@@ -207,9 +213,15 @@ def test_results_are_newest_first_with_deterministic_source_and_skill_order(
     python = create_skill(session, "python")
     newer_start = PERIOD_START + timedelta(days=7)
     newer_end = PERIOD_END + timedelta(days=7)
-    create_indicator(session, remotive, python, period_start=newer_start, period_end=newer_end)
-    create_indicator(session, muse, docker, period_start=newer_start, period_end=newer_end)
-    create_indicator(session, muse, python, period_start=PERIOD_START, period_end=PERIOD_END)
+    create_indicator(
+        session, remotive, python, period_start=newer_start, period_end=newer_end
+    )
+    create_indicator(
+        session, muse, docker, period_start=newer_start, period_end=newer_end
+    )
+    create_indicator(
+        session, muse, python, period_start=PERIOD_START, period_end=PERIOD_END
+    )
 
     response = client.get("/api/indicators/weekly")
 
@@ -230,7 +242,9 @@ def test_empty_result_is_an_empty_list(client: TestClient) -> None:
     assert response.json() == []
 
 
-def test_invalid_period_range_and_naive_datetimes_return_422(client: TestClient) -> None:
+def test_invalid_period_range_and_naive_datetimes_return_422(
+    client: TestClient,
+) -> None:
     invalid_range = client.get(
         "/api/indicators/weekly",
         params={
@@ -247,7 +261,9 @@ def test_invalid_period_range_and_naive_datetimes_return_422(client: TestClient)
     assert naive_datetime.status_code == 422
 
 
-def test_response_matches_weekly_indicator_schema(client: TestClient, session: Session) -> None:
+def test_response_matches_weekly_indicator_schema(
+    client: TestClient, session: Session
+) -> None:
     source = create_source(session, "muse")
     skill = create_skill(session, "python")
     create_indicator(session, source, skill)

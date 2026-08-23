@@ -40,4 +40,6 @@ class RawSourceRecord(TimestampMixin, Base):
     payload_hash: Mapped[str] = mapped_column(String(64), index=True)
 
     source: Mapped[DataSource] = relationship(back_populates="raw_source_records")
-    ingestion_run: Mapped[IngestionRun] = relationship(back_populates="raw_source_records")
+    ingestion_run: Mapped[IngestionRun] = relationship(
+        back_populates="raw_source_records"
+    )

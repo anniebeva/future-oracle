@@ -33,7 +33,9 @@ def upgrade() -> None:
         sa.Column("coverage_days", sa.Integer(), nullable=False),
         sa.Column("calculated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["skill_id"], ["skills.id"], ondelete="RESTRICT"),
-        sa.ForeignKeyConstraint(["source_id"], ["data_sources.id"], ondelete="RESTRICT"),
+        sa.ForeignKeyConstraint(
+            ["source_id"], ["data_sources.id"], ondelete="RESTRICT"
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint(
             "source_id",
@@ -43,10 +45,16 @@ def upgrade() -> None:
             name="uq_weekly_indicators_source_skill_period",
         ),
     )
-    op.create_index("ix_weekly_indicators_source_id", "weekly_indicators", ["source_id"])
+    op.create_index(
+        "ix_weekly_indicators_source_id", "weekly_indicators", ["source_id"]
+    )
     op.create_index("ix_weekly_indicators_skill_id", "weekly_indicators", ["skill_id"])
-    op.create_index("ix_weekly_indicators_period_start", "weekly_indicators", ["period_start"])
-    op.create_index("ix_weekly_indicators_period_end", "weekly_indicators", ["period_end"])
+    op.create_index(
+        "ix_weekly_indicators_period_start", "weekly_indicators", ["period_start"]
+    )
+    op.create_index(
+        "ix_weekly_indicators_period_end", "weekly_indicators", ["period_end"]
+    )
 
 
 def downgrade() -> None:

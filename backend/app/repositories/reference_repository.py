@@ -12,12 +12,16 @@ class ReferenceRepository:
         """Return active sources ordered by code"""
         return list(
             session.scalars(
-                select(DataSource).where(DataSource.is_active.is_(True)).order_by(DataSource.code)
+                select(DataSource)
+                .where(DataSource.is_active.is_(True))
+                .order_by(DataSource.code)
             )
         )
 
     def list_skills(self, session: Session) -> list[Skill]:
         """Return active skills ordered by code"""
         return list(
-            session.scalars(select(Skill).where(Skill.is_active.is_(True)).order_by(Skill.code))
+            session.scalars(
+                select(Skill).where(Skill.is_active.is_(True)).order_by(Skill.code)
+            )
         )

@@ -3,13 +3,10 @@ from collections.abc import Callable
 import httpx
 import pytest
 
-from app.clients.muse_client import (
-    DEFAULT_CATEGORY,
-    MuseClient,
-    MuseClientConnectionError,
-    MuseClientHTTPError,
-    MuseClientTimeoutError,
-)
+from app.clients.muse_client import (DEFAULT_CATEGORY, MuseClient,
+                                     MuseClientConnectionError,
+                                     MuseClientHTTPError,
+                                     MuseClientTimeoutError)
 from app.core.config import Settings
 
 

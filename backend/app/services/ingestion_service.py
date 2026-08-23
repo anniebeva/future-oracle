@@ -237,7 +237,9 @@ class IngestionService:
             raise ValueError(f"Source job is missing {key}")
         return value
 
-    def _required_nested_string(self, job: dict[str, Any], parent: str, key: str) -> str:
+    def _required_nested_string(
+        self, job: dict[str, Any], parent: str, key: str
+    ) -> str:
         value = job.get(parent)
         if not isinstance(value, dict):
             raise ValueError(f"Source job is missing {parent}.{key}")
@@ -248,7 +250,9 @@ class IngestionService:
         value = job.get(key)
         return value if isinstance(value, str) else None
 
-    def _optional_nested_string(self, job: dict[str, Any], parent: str, key: str) -> str | None:
+    def _optional_nested_string(
+        self, job: dict[str, Any], parent: str, key: str
+    ) -> str | None:
         value = job.get(parent)
         return self._optional_string(value, key) if isinstance(value, dict) else None
 

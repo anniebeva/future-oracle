@@ -4,13 +4,12 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db_session
-from app.repositories.weekly_indicator_repository import WeeklyIndicatorRepository
-from app.schemas.weekly_indicator import (
-    IndicatorSkillResponse,
-    IndicatorSourceResponse,
-    WeeklyIndicatorFilters,
-    WeeklyIndicatorResponse,
-)
+from app.repositories.weekly_indicator_repository import \
+    WeeklyIndicatorRepository
+from app.schemas.weekly_indicator import (IndicatorSkillResponse,
+                                          IndicatorSourceResponse,
+                                          WeeklyIndicatorFilters,
+                                          WeeklyIndicatorResponse)
 
 router = APIRouter(prefix="/api/indicators", tags=["indicators"])
 
@@ -31,7 +30,9 @@ def list_weekly_indicators(
     return [
         WeeklyIndicatorResponse(
             source=IndicatorSourceResponse(code=source.code, name=source.name),
-            skill=IndicatorSkillResponse(code=skill.code, display_name=skill.display_name),
+            skill=IndicatorSkillResponse(
+                code=skill.code, display_name=skill.display_name
+            ),
             period_start=indicator.period_start,
             period_end=indicator.period_end,
             eligible_postings_count=indicator.eligible_postings_count,

@@ -2,11 +2,10 @@ from typing import Literal, NamedTuple
 
 from sqlalchemy.orm import Session
 
-from app.repositories.weekly_indicator_repository import WeeklyIndicatorRepository
-from app.services.weekly_indicator_service import (
-    MINIMUM_COVERAGE_DAYS,
-    MINIMUM_ELIGIBLE_POSTINGS,
-)
+from app.repositories.weekly_indicator_repository import \
+    WeeklyIndicatorRepository
+from app.services.weekly_indicator_service import (MINIMUM_COVERAGE_DAYS,
+                                                   MINIMUM_ELIGIBLE_POSTINGS)
 
 
 class ForecastResult(NamedTuple):
@@ -96,9 +95,7 @@ class ForecastService:
             1.0,
         )
 
-        confidence = int(
-            100 * (0.6 * coverage_factor + 0.4 * volume_factor)
-        )
+        confidence = int(100 * (0.6 * coverage_factor + 0.4 * volume_factor))
         confidence = max(0, min(100, confidence))
 
         if confidence >= 80 and len(recent_indicators) >= 4:
@@ -137,4 +134,3 @@ class ForecastService:
             explanation=explanation,
             calculation_steps=calculation_steps,
         )
-    

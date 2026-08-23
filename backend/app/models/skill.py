@@ -20,9 +20,17 @@ class Skill(TimestampMixin, Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     code: Mapped[str] = mapped_column(String(50), index=True)
     display_name: Mapped[str] = mapped_column(String(100))
-    dictionary_version: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    dictionary_version: Mapped[int] = mapped_column(
+        Integer, default=1, server_default="1"
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="true"
+    )
 
     aliases: Mapped[list[SkillAlias]] = relationship(back_populates="skill")
-    job_skill_matches: Mapped[list[JobSkillMatch]] = relationship(back_populates="skill")
-    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(back_populates="skill")
+    job_skill_matches: Mapped[list[JobSkillMatch]] = relationship(
+        back_populates="skill"
+    )
+    weekly_indicators: Mapped[list[WeeklyIndicator]] = relationship(
+        back_populates="skill"
+    )

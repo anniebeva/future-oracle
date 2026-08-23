@@ -89,7 +89,11 @@ def test_sources_return_active_records_in_code_order_with_public_fields(
     assert response.status_code == 200
     assert response.json() == [
         {"code": "muse", "name": "Muse", "base_url": "https://muse.example"},
-        {"code": "remotive", "name": "Remotive", "base_url": "https://remotive.example"},
+        {
+            "code": "remotive",
+            "name": "Remotive",
+            "base_url": "https://remotive.example",
+        },
     ]
     assert set(response.json()[0]) == {"code", "name", "base_url"}
 

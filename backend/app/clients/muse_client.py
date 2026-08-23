@@ -27,7 +27,9 @@ class MuseClientTimeoutError(MuseClientConnectionError):
 class MuseClient:
     """HTTP client for The Muse Jobs API"""
 
-    def __init__(self, settings: Settings, http_client: httpx.Client | None = None) -> None:
+    def __init__(
+        self, settings: Settings, http_client: httpx.Client | None = None
+    ) -> None:
         self._base_url = settings.muse_base_url.rstrip("/")
         self._api_key = settings.muse_api_key
         self._http_client = http_client or httpx.Client(timeout=REQUEST_TIMEOUT_SECONDS)
@@ -62,7 +64,9 @@ class MuseClient:
                 f"The Muse API returned HTTP {error.response.status_code}"
             ) from error
         except httpx.RequestError as error:
-            raise MuseClientConnectionError("Could not connect to The Muse API") from error
+            raise MuseClientConnectionError(
+                "Could not connect to The Muse API"
+            ) from error
 
         return response.json()
 

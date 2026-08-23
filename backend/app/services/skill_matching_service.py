@@ -84,7 +84,9 @@ class SkillMatchingService:
         """Synchronize matches for multiple postings"""
         matches: list[JobSkillMatch] = []
         for job_posting_id in job_posting_ids:
-            matches.extend(self.match_job_posting(session, job_posting_id, dictionary_version))
+            matches.extend(
+                self.match_job_posting(session, job_posting_id, dictionary_version)
+            )
         return matches
 
     def _collect_evidence(
@@ -118,14 +120,18 @@ class SkillMatchingService:
             if not all_matches:
                 continue
             evidence[skill.id] = _SkillEvidence(
-                matched_alias=self._representative_alias(ordered_aliases, title, description),
+                matched_alias=self._representative_alias(
+                    ordered_aliases, title, description
+                ),
                 matched_in_title=bool(title_matches),
                 matched_in_description=bool(description_matches),
                 match_count=len(all_matches),
             )
         return evidence
 
-    def _ordered_aliases(self, skill_code: str, aliases: list[SkillAlias]) -> list[SkillAlias]:
+    def _ordered_aliases(
+        self, skill_code: str, aliases: list[SkillAlias]
+    ) -> list[SkillAlias]:
         """Order aliases by configured priority then alphabetically"""
         configured_order = {
             self._normalize_text(alias): position
@@ -134,7 +140,9 @@ class SkillMatchingService:
         return sorted(
             aliases,
             key=lambda alias: (
-                configured_order.get(self._normalize_text(alias.alias), len(configured_order)),
+                configured_order.get(
+                    self._normalize_text(alias.alias), len(configured_order)
+                ),
                 self._normalize_text(alias.alias),
             ),
         )
@@ -146,7 +154,9 @@ class SkillMatchingService:
             normalized_alias = self._normalize_text(alias.alias)
             pattern = re.compile(rf"(?<!\w){re.escape(normalized_alias)}(?!\w)")
             for occurrence in pattern.finditer(text):
-                candidates.append((occurrence.start(), occurrence.end(), priority, alias.alias))
+                candidates.append(
+                    (occurrence.start(), occurrence.end(), priority, alias.alias)
+                )
 
         candidates.sort(
             key=lambda candidate: (

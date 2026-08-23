@@ -27,10 +27,14 @@ class JobSkillMatch(TimestampMixin, Base):
     job_posting_id: Mapped[int] = mapped_column(
         ForeignKey("job_postings.id", ondelete="CASCADE"), index=True
     )
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id", ondelete="RESTRICT"), index=True)
+    skill_id: Mapped[int] = mapped_column(
+        ForeignKey("skills.id", ondelete="RESTRICT"), index=True
+    )
     dictionary_version: Mapped[int] = mapped_column(Integer)
     matched_alias: Mapped[str] = mapped_column(String(255))
-    matched_in_title: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    matched_in_title: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="false"
+    )
     matched_in_description: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default="false"
     )

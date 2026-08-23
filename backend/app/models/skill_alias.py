@@ -13,12 +13,20 @@ if TYPE_CHECKING:
 
 class SkillAlias(TimestampMixin, Base):
     __tablename__ = "skill_aliases"
-    __table_args__ = (UniqueConstraint("skill_id", "alias", name="uq_skill_aliases_skill_alias"),)
+    __table_args__ = (
+        UniqueConstraint("skill_id", "alias", name="uq_skill_aliases_skill_alias"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id", ondelete="CASCADE"), index=True)
+    skill_id: Mapped[int] = mapped_column(
+        ForeignKey("skills.id", ondelete="CASCADE"), index=True
+    )
     alias: Mapped[str] = mapped_column(String(255))
-    match_type: Mapped[str] = mapped_column(String(30), default="word", server_default="word")
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    match_type: Mapped[str] = mapped_column(
+        String(30), default="word", server_default="word"
+    )
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="true"
+    )
 
     skill: Mapped[Skill] = relationship(back_populates="aliases")

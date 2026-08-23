@@ -32,7 +32,9 @@ class WeeklyIndicatorService:
         _validate_completed_calendar_week(period_start, period_end, calculation_time)
 
         sources = session.scalars(
-            select(DataSource).where(DataSource.is_active.is_(True)).order_by(DataSource.id)
+            select(DataSource)
+            .where(DataSource.is_active.is_(True))
+            .order_by(DataSource.id)
         ).all()
         skills = session.scalars(
             select(Skill).where(Skill.is_active.is_(True)).order_by(Skill.id)
@@ -42,7 +44,9 @@ class WeeklyIndicatorService:
             eligible_posting_ids = self._eligible_posting_ids(
                 session, source, period_start, period_end
             )
-            coverage_days = self._coverage_days(session, source.id, period_start, period_end)
+            coverage_days = self._coverage_days(
+                session, source.id, period_start, period_end
+            )
             for skill in skills:
                 indicators.append(
                     self._calculate_source_skill_week(
@@ -104,7 +108,9 @@ class WeeklyIndicatorService:
                 IngestionRun.finished_at <= period_end,
             )
         ).all()
-        return len({_stored_utc_date(finished_at) for finished_at in finished_at_values})
+        return len(
+            {_stored_utc_date(finished_at) for finished_at in finished_at_values}
+        )
 
     def _calculate_source_skill_week(
         self,
@@ -201,7 +207,9 @@ def _validate_completed_calendar_week(
     expected_end = datetime.combine(start.date(), time.min, UTC) + timedelta(
         days=7, microseconds=-1
     )
-    current_week_start = datetime.combine(now.date() - timedelta(days=now.weekday()), time.min, UTC)
+    current_week_start = datetime.combine(
+        now.date() - timedelta(days=now.weekday()), time.min, UTC
+    )
     if start != datetime.combine(start.date(), time.min, UTC) or end != expected_end:
         raise ValueError("Period must be a UTC Monday-to-Sunday calendar week")
     if start.weekday() != 0:

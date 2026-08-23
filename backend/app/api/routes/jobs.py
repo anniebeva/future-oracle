@@ -6,12 +6,8 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db_session
 from app.models.job_posting import JobPosting
 from app.repositories.job_posting_repository import JobPostingRepository
-from app.schemas.job_posting import (
-    JobPostingFilters,
-    JobPostingResponse,
-    JobSkillResponse,
-    JobSourceResponse,
-)
+from app.schemas.job_posting import (JobPostingFilters, JobPostingResponse,
+                                     JobSkillResponse, JobSourceResponse)
 
 router = APIRouter(prefix="/api", tags=["jobs"])
 
@@ -41,7 +37,8 @@ def _to_response(posting: JobPosting) -> JobPostingResponse:
         {
             (match.skill.code, match.skill.display_name)
             for match in posting.skill_matches
-            if match.skill.is_active and match.dictionary_version == match.skill.dictionary_version
+            if match.skill.is_active
+            and match.dictionary_version == match.skill.dictionary_version
         }
     )
     return JobPostingResponse(
