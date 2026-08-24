@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.api.routes.forecasts import router as forecasts_router
 from app.api.routes.health import router as health_router
 from app.api.routes.jobs import router as jobs_router
 from app.api.routes.reference import router as reference_router
@@ -10,3 +11,4 @@ api_router.include_router(health_router)
 api_router.include_router(jobs_router)
 api_router.include_router(reference_router)
 api_router.include_router(weekly_indicators_router)
+api_router.include_router(forecasts_router)
