@@ -5,6 +5,7 @@ import {
   SkillResponse,
   JobFilters,
   IndicatorFilters,
+  ForecastResult,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -66,6 +67,11 @@ export const apiClient = {
     }
     
     return apiRequest<WeeklyIndicatorResponse[]>('/api/indicators/weekly', params);
+  },
+
+  // Forecast API
+  async getForecast(skillCode: string): Promise<ForecastResult> {
+    return apiRequest<ForecastResult>(`/api/forecasts/skills/${skillCode}`);
   },
 
   // Reference data

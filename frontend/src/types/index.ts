@@ -61,6 +61,35 @@ export interface WeeklyIndicatorResponse {
   calculated_at: string;
 }
 
+// Forecast types
+export interface ForecastSkillResponse {
+  code: string;
+  display_name: string;
+}
+
+export interface ForecastResponse {
+  skill: ForecastSkillResponse;
+  score: number;
+  direction: 'growing' | 'stable' | 'declining';
+  confidence: number;
+  risk: 'low' | 'medium' | 'high';
+  explanation: string;
+  calculation_steps: {
+    trend_pp: number;
+    trend_signal: number;
+    momentum_pp: number;
+    momentum_signal: number;
+    coverage_factor: number;
+    volume_factor: number;
+  };
+}
+
+export interface InsufficientDataResponse {
+  reason: string;
+}
+
+export type ForecastResult = ForecastResponse | InsufficientDataResponse;
+
 // Frontend-specific types for filters
 export interface JobFilters {
   search?: string;

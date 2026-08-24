@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../api/client';
-import { JobPostingResponse, DataSourceResponse, SkillResponse, JobFilters } from '../types';
+import {
+  JobPostingResponse,
+  DataSourceResponse,
+  SkillResponse,
+  JobFilters,
+  ForecastResult,
+} from '../types';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { JobCard } from '../components/JobCard';
 import { JobFiltersComponent } from '../components/JobFilters';
+import { ForecastCard } from '../components/ForecastCard';
 
 export function JobsPage() {
   const [jobs, setJobs] = useState<JobPostingResponse[]>([]);
@@ -15,14 +22,21 @@ export function JobsPage() {
   const [error, setError] = useState<Error | null>(null);
   const [filters, setFilters] = useState<JobFilters>({});
 
+  // Forecast state
+  const [forecast, setForecast] = useState<ForecastResult | null>(null);
+  const [forecastLoading, setForecastLoading] = useState(false);
+  const [forecastError, setForecastError] = useState<Error | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+
   // Load reference data on mount
   useEffect(() => {
     const loadReferenceData = async () => {
       try {
         const [sourcesData, skillsData] = await Promise.all([
           apiClient.getSources(),
-          apiClient.getSkills()
+          apiClient.getSkills(),
         ]);
+
         setSources(sourcesData);
         setSkills(skillsData);
       } catch (err) {
@@ -38,6 +52,7 @@ export function JobsPage() {
     try {
       setLoading(true);
       setError(null);
+
       const jobsData = await apiClient.getJobs(filters);
       setJobs(jobsData);
     } catch (err) {
@@ -51,10 +66,27 @@ export function JobsPage() {
     loadJobs();
   }, [loadJobs]);
 
+  // Load forecast for selected skill
+  const handleSkillClick = async (skillCode: string) => {
+    setSelectedSkill(skillCode);
+    setForecast(null);
+    setForecastError(null);
+    setForecastLoading(true);
+
+    try {
+      const forecastData = await apiClient.getForecast(skillCode);
+      setForecast(forecastData);
+    } catch (err) {
+      setForecastError(err as Error);
+    } finally {
+      setForecastLoading(false);
+    }
+  };
+
   const updateFilter = (key: keyof JobFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value || undefined
+      [key]: value || undefined,
     }));
   };
 
@@ -67,7 +99,13 @@ export function JobsPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+    <div
+      style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 1rem',
+      }}
+    >
       <JobFiltersComponent
         filters={filters}
         sources={sources}
@@ -89,19 +127,40 @@ export function JobsPage() {
           />
         ) : (
           <>
-            <div style={{ 
-              marginBottom: '1rem',
-              padding: '1rem',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '4px',
-              fontSize: '0.9rem',
-              color: '#666'
-            }}>
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '1rem',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '4px',
+                fontSize: '0.9rem',
+                color: '#666',
+              }}
+            >
               Found {jobs.length} job{jobs.length === 1 ? '' : 's'}
             </div>
-            
-            {jobs.map(job => (
-              <JobCard key={job.id} job={job} />
+
+            {jobs.map((job) => (
+              <React.Fragment key={job.id}>
+                <JobCard
+                  job={job}
+                  onSkillClick={handleSkillClick}
+                  selectedSkill={selectedSkill}
+                />
+
+                {selectedSkill &&
+                  job.skills.some(
+                    (skill) => skill.code === selectedSkill
+                  ) && (
+                    <div style={{ marginBottom: '1rem' }}>
+                      <ForecastCard
+                        forecast={forecast}
+                        loading={forecastLoading}
+                        error={forecastError}
+                      />
+                    </div>
+                  )}
+              </React.Fragment>
             ))}
           </>
         )}
